@@ -1,5 +1,9 @@
 import java.util.Scanner;
+import java.util.Arrays;
 
+/**
+ * initializes conversation and impliments chatbot
+ */
 class Conversation implements Chatbot {
 
   // Attributes 
@@ -9,13 +13,13 @@ class Conversation implements Chatbot {
       "Mmmmm!",
       "Interesting.",
       "Tell me more.",
-      "Go on.",
+      "Hmmm.",
       "I see.",
   };
 
   // Mirror words and replacements
-  static String[] mirrorWords = {"I", "me", "am", "you", "my", "your", "are"};
-  static String[] mirrorReplacements = {"you", "you", "are", "I", "your", "my", "am"};
+  static String[] mirrorWords = {"i", "me", "am", "you", "my", "your", "are"};
+  static String[] mirrorReplacements = {"you", "you", "are", "i", "your", "my", "am"};
 
   /**
    * Constructor 
@@ -32,9 +36,14 @@ class Conversation implements Chatbot {
     Scanner scanner = new Scanner(System.in);
 
     // Query user for number of conversation rounds
-    System.out.print("Enter the number of conversation rounds: ");
+    System.out.println("Enter the number of conversation rounds: ");
     rounds = scanner.nextInt();
     scanner.nextLine(); // Consume newline
+
+    if (rounds > transcript.length) {
+      System.out.println("Maximum conversation rounds is " + transcript.length + ". Setting rounds to " + transcript.length + ".");
+      rounds = transcript.length;
+    }
 
     // Carry out the requested number of conversation rounds
     for (int i = 0; i < rounds; i++) {
@@ -63,16 +72,23 @@ class Conversation implements Chatbot {
    * @param inputString the users last line of input
    * @return mirrored or canned response to user input  
    */
-  public String respond(String inputString) {
-    String returnString = inputString; 
-
-    // Iterate through mirror words and replace them with mirror replacements
-    for (int i = 0; i < mirrorWords.length; i++) {
-      returnString = returnString.replaceAll("\\b" + mirrorWords[i] + "\\b", mirrorReplacements[i]);
+  
+   public String respond(String inputString) {
+    String returnString = ""; 
+    String[] inputArray = inputString.split(" ");
+    String[] outputArray = new String[inputArray.length];
+    for (int i = 0; i < inputArray.length; i++) {
+      outputArray[i]= inputArray[i];
+      for (int j = 0; j < mirrorWords.length; j++) {
+        if (inputArray[i].equals(mirrorWords[j])) {
+          outputArray[i] = mirrorReplacements[j];
+        }
+      }
     }
+    returnString = String.join(" ", outputArray);
 
     // If no mirror words were found, return a random canned response
-    if (returnString.equals(inputString)) {
+    if (returnString.equalsIgnoreCase(inputString)) {
       int randomIndex = (int) (Math.random() * cannedResponses.length);
       returnString = cannedResponses[randomIndex];
     }
