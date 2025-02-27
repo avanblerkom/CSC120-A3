@@ -18,8 +18,8 @@ class Conversation implements Chatbot {
   };
 
   // Mirror words and replacements
-  static String[] mirrorWords = {"i", "me", "am", "you", "my", "your", "are"};
-  static String[] mirrorReplacements = {"you", "you", "are", "i", "your", "my", "am"};
+  static String[] mirrorWords = {"I", "me", "am", "you", "my", "your", "are"};
+  static String[] mirrorReplacements = {"you", "you", "are", "I", "your", "my", "am"};
 
   /**
    * Constructor 
