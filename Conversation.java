@@ -1,102 +1,124 @@
 import java.util.Scanner;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Random;
 
 /**
- * initializes conversation and impliments chatbot
+ * Implements a chatbot that mirrors user input or provides canned responses.
  */
 class Conversation implements Chatbot {
 
-  // Attributes 
-  int rounds;
-  String[] transcript;
-  static String[] cannedResponses = {
+  // Attributes
+  private int rounds;
+  private ArrayList<String> transcript;
+  private static final String[] cannedResponses = {
       "Mmmmm!",
       "Interesting.",
       "Tell me more.",
       "Hmmm.",
-      "I see.",
+      "I see."
   };
 
   // Mirror words and replacements
-  static String[] mirrorWords = {"I", "me", "am", "you", "my", "your", "are"};
-  static String[] mirrorReplacements = {"you", "you", "are", "I", "your", "my", "am"};
+  private static final String[] mirrorWords = {"I", "me", "am", "you", "my", "your", "are"};
+  private static final String[] mirrorReplacements = {"you", "you", "are", "I", "your", "my", "am"};
 
   /**
-   * Constructor 
+   * Constructor
    */
   public Conversation() {
-    // Initialize the transcript array with a size of 100 for demonstration
-    transcript = new String[100];
+    transcript = new ArrayList<>();
   }
 
   /**
-   * Starts and runs the conversation with the user
+   * Starts and runs the conversation with the user.
    */
   public void chat() {
     Scanner scanner = new Scanner(System.in);
 
     // Query user for number of conversation rounds
-    System.out.println("Enter the number of conversation rounds: ");
+    System.out.println("How many rounds?");
+    while (!scanner.hasNextInt()) {
+      System.out.println("Please enter a valid number.");
+      scanner.next();
+    }
     rounds = scanner.nextInt();
     scanner.nextLine(); // Consume newline
 
-    if (rounds > transcript.length) {
-      System.out.println("Maximum conversation rounds is " + transcript.length + ". Setting rounds to " + transcript.length + ".");
-      rounds = transcript.length;
-    }
+    // Print greeting
+    System.out.println("Hi there! What's on your mind?");
+    transcript.add("Bot: Hi there! What's on your mind?");
 
     // Carry out the requested number of conversation rounds
     for (int i = 0; i < rounds; i++) {
       System.out.print("You: ");
       String userInput = scanner.nextLine();
+      transcript.add("You: " + userInput);
+
       String response = respond(userInput);
       System.out.println("Bot: " + response);
-      transcript[i] = "You: " + userInput + " | Bot: " + response;
+      transcript.add("Bot: " + response);
     }
+
+    // Print goodbye message
+    System.out.println("See ya!");
+    transcript.add("Bot: See ya!");
 
     scanner.close();
   }
 
   /**
-   * Prints transcript of conversation
+   * Prints the transcript of the conversation.
    */
   public void printTranscript() {
-    System.out.println("Transcript of the conversation:");
-    for (int i = 0; i < rounds; i++) {
-      System.out.println(transcript[i]);
+    System.out.println("\nTRANSCRIPT:");
+    for (String line : transcript) {
+      System.out.println(line);
     }
   }
 
   /**
-   * Gives appropriate response (mirrored or canned) to user input
-   * @param inputString the users last line of input
-   * @return mirrored or canned response to user input  
+   * Generates an appropriate response (mirrored or canned) to user input.
+   * 
+   * @param inputString the user's last line of input
+   * @return mirrored or canned response to user input
    */
-  
-   public String respond(String inputString) {
-    String returnString = ""; 
-    String[] inputArray = inputString.split(" ");
-    String[] outputArray = new String[inputArray.length];
-    for (int i = 0; i < inputArray.length; i++) {
-      outputArray[i]= inputArray[i];
-      for (int j = 0; j < mirrorWords.length; j++) {
-        if (inputArray[i].equals(mirrorWords[j])) {
-          outputArray[i] = mirrorReplacements[j];
+  public String respond(String inputString) {
+    String[] inputWords = inputString.split("\\s+");
+    StringBuilder responseBuilder = new StringBuilder();
+    boolean mirrored = false;
+
+    for (String word : inputWords) {
+      String strippedWord = word.replaceAll("[^a-zA-Z]", ""); // Remove punctuation
+      String punctuation = word.replaceAll("[a-zA-Z]", ""); // Extract punctuation
+      boolean replaced = false;
+
+      // Check for mirror words and replace them
+      for (int i = 0; i < mirrorWords.length; i++) {
+        if (strippedWord.equalsIgnoreCase(mirrorWords[i])) {
+          responseBuilder.append(mirrorReplacements[i]).append(punctuation).append(" ");
+          replaced = true;
+          mirrored = true;
+          break;
         }
       }
+
+      // If no replacement was made, keep the original word
+      if (!replaced) {
+        responseBuilder.append(word).append(" ");
+      }
     }
-    returnString = String.join(" ", outputArray);
 
     // If no mirror words were found, return a random canned response
-    if (returnString.equalsIgnoreCase(inputString)) {
-      int randomIndex = (int) (Math.random() * cannedResponses.length);
-      returnString = cannedResponses[randomIndex];
+    if (!mirrored) {
+      Random random = new Random();
+      return cannedResponses[random.nextInt(cannedResponses.length)];
     }
 
-    return returnString; 
+    // Return the mirrored response
+    return responseBuilder.toString().trim();
   }
 
-  public static void main(String[] arguments) {
+  public static void main(String[] args) {
     Conversation myConversation = new Conversation();
     myConversation.chat();
     myConversation.printTranscript();

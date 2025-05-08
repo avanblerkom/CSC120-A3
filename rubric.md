@@ -38,11 +38,11 @@ _____ 1 pt: `reflection.md` lists the classmates you consulted & TA hours attend
 
 ## Kudos:
 
-_____ (Kudos!) Handles mirror words with punctuation
+**YES** (Kudos!) Handles mirror words with punctuation
 
-_____ (Kudos!) Generates output with correct punctuation & capitalization
+**YES** (Kudos!) Generates output with correct punctuation & capitalization
 
-_____ (Kudos!) Handles you --> me/I dilemma
+**YES** (Kudos!) Handles you --> me/I dilemma
 
 
 
